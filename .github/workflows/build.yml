@@ -37,7 +37,7 @@ jobs:
         pyinstaller --onefile final.py
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3.1.3
+      uses: actions/upload-artifact@v3
       with:
         name: pdf_splitter_exe
         path: dist/final.exe
