@@ -1,0 +1,43 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pytesseract pdf2image PyPDF2 pillow
+
+    - name: Download and install Tesseract OCR
+      run: |
+        choco install tesseract -y
+        echo "TESSDATA_PREFIX=C:\ProgramData\chocolatey\lib\tesseract\tools\tesseract\tessdata" >> $env:GITHUB_ENV
+
+    - name: Download and install Poppler
+      run: |
+        choco install poppler -y
+
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile final.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: pdf_splitter_exe
+        path: dist/final.exe
