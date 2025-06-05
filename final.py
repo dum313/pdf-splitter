@@ -6,12 +6,18 @@ from pdf2image import convert_from_path  # Преобразует PDF-стран
 from PyPDF2 import PdfReader, PdfWriter  # Чтение и создание PDF-файлов
 from tkinter import Tk, filedialog  # Открывает окно выбора файла
 
-# 🧭 Указываем путь к poppler (требуется для pdf2image) — ищем его рядом с final.exe
-poppler_path = os.path.join(
-    os.path.dirname(__file__),  # Получаем папку, где лежит этот скрипт или .exe
-    "poppler-24.08.0",          # Это папка, которую ты положил рядом с программой
-    "Library", "bin"            # Там находится нужный файл pdfinfo.exe
-)
+# 🧭 Пытаемся найти путь к poppler (требуется для pdf2image)
+# 1. Сначала смотрим переменную окружения POPPLER_PATH
+# 2. Затем проверяем стандартную папку рядом со скриптом
+poppler_path = os.environ.get("POPPLER_PATH")
+if not poppler_path:
+    default_poppler = os.path.join(
+        os.path.dirname(__file__),
+        "poppler-24.08.0",
+        "Library",
+        "bin",
+    )
+    poppler_path = default_poppler if os.path.exists(default_poppler) else None
 
 # 🔕 Отключаем главное окно tkinter (оно нам не нужно, хотим только диалог выбора файла)
 Tk().withdraw()
@@ -38,7 +44,10 @@ os.makedirs(output_folder, exist_ok=True)  # Если папки нет — со
 reader = PdfReader(source_pdf)
 
 # 🖼️ Преобразуем PDF в изображения (300 dpi — оптимальное качество для OCR)
-images = convert_from_path(source_pdf, dpi=300, poppler_path=poppler_path)
+if poppler_path:
+    images = convert_from_path(source_pdf, dpi=300, poppler_path=poppler_path)
+else:
+    images = convert_from_path(source_pdf, dpi=300)
 
 # 🔍 Регулярное выражение для поиска ID (например, CICU6332694P)
 # Шаблон: 4 заглавные буквы, опц. ещё 1 буква, 7 цифр и буква P
