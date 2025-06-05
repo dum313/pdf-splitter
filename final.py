@@ -10,6 +10,10 @@ from tkinter import Tk, filedialog  # Открывает окно выбора �
 # 1. Сначала смотрим переменную окружения POPPLER_PATH
 # 2. Затем проверяем стандартную папку рядом со скриптом
 poppler_path = os.environ.get("POPPLER_PATH")
+# Проверяем, существует ли путь из переменной окружения
+if poppler_path and not os.path.exists(poppler_path):
+    poppler_path = None
+
 if not poppler_path:
     default_poppler = os.path.join(
         os.path.dirname(__file__),
