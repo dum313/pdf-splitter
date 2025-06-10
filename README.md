@@ -50,11 +50,6 @@ python final.py --input path/to/file.pdf --output ./pages
 python final.py --input path/to/file.pdf
 ```
 
-
-```bash
-source venv_tk/bin/activate
-```
-
 ## Лицензия
 
 Проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE).
