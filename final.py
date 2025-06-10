@@ -7,6 +7,7 @@ import pytesseract
 from pdf2image import convert_from_path
 from PyPDF2 import PdfReader, PdfWriter
 from tkinter import Tk, filedialog
+from tqdm import tqdm
 
 
 def main():
@@ -76,7 +77,9 @@ def main():
     # ▶️ Обрабатываем все страницы по порядку
     i = 0
     total_pages = len(reader.pages)
+    progress_bar = tqdm(total=total_pages, desc="Обработка", unit="стр.")
     while i < total_pages:
+        processed_pages = 1
         # 🖼️ Загружаем изображение текущей страницы
         current_image = convert_from_path(
             source_pdf,
@@ -120,6 +123,7 @@ def main():
             if not flex_pattern.search(next_clean):
                 writer.add_page(reader.pages[i + 1])
                 i += 2
+                processed_pages = 2
             else:
                 i += 1
         else:
@@ -146,6 +150,9 @@ def main():
             writer.write(out_pdf)
 
         print(f"✅ Создан файл: {output_path}")
+        progress_bar.update(processed_pages)
+
+    progress_bar.close()
 
 
 if __name__ == "__main__":
