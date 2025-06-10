@@ -51,8 +51,6 @@ def main():
     # 📖 Читаем PDF-файл
     reader = PdfReader(source_pdf)
 
-    # 🖼️ Преобразуем PDF в изображения
-    images = convert_from_path(source_pdf, dpi=300, poppler_path=poppler_path)
 
     # 🔍 Регулярное выражение для поиска ID (например, CICU6332694P)
     flex_pattern = re.compile(r"([A-Z]{4})([A-Z]?)(\d{7})([P])")
@@ -62,10 +60,17 @@ def main():
 
     # ▶️ Обрабатываем все страницы по порядку
     i = 0
-    while i < len(reader.pages):
-        # 🖼️ Берём текущую страницу и вырезаем нужную область
-        image = images[i]
-        cropped_image = image.crop(crop_area)
+    total_pages = len(reader.pages)
+    while i < total_pages:
+        # 🖼️ Загружаем изображение текущей страницы
+        current_image = convert_from_path(
+            source_pdf,
+            dpi=300,
+            poppler_path=poppler_path,
+            first_page=i + 1,
+            last_page=i + 1,
+        )[0]
+        cropped_image = current_image.crop(crop_area)
 
         # 🔡 Распознаём текст (OCR) и очищаем от мусора
         text = pytesseract.image_to_string(cropped_image)
@@ -85,8 +90,14 @@ def main():
         writer.add_page(reader.pages[i])
 
         # 🔄 Проверяем, не идёт ли дополнительная страница после
-        if i + 1 < len(reader.pages):
-            next_image = images[i + 1].crop(crop_area)
+        if i + 1 < total_pages:
+            next_image = convert_from_path(
+                source_pdf,
+                dpi=300,
+                poppler_path=poppler_path,
+                first_page=i + 2,
+                last_page=i + 2,
+            )[0].crop(crop_area)
             next_text = pytesseract.image_to_string(next_image)
             next_clean = re.sub(r"[\s()\-\n]+", "", next_text.upper())
 
