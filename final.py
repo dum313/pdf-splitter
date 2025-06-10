@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+import shutil
 import pytesseract
 from pdf2image import convert_from_path
 from PyPDF2 import PdfReader, PdfWriter
@@ -10,17 +11,22 @@ from tkinter import Tk, filedialog
 
 def main():
     """Split PDF into separate files using OCR for naming."""
-    # 🧭 Указываем путь к poppler (требуется для pdf2image)
-    poppler_path = os.path.join(
-        os.path.dirname(__file__),
-        "poppler-24.08.0",
-        "Library",
-        "bin",
-    )
+    # 🧭 Путь к Poppler по умолчанию не указан
+    poppler_path = None
+
     # Если указана переменная окружения POPPLER_PATH, используем её
     env_poppler = os.getenv("POPPLER_PATH")
     if env_poppler:
         poppler_path = env_poppler
+    # Иначе, если в системе есть pdftoppm, используем системный Poppler
+    elif not shutil.which("pdftoppm"):
+        # Если pdftoppm не найден, берём поставляемый вместе с программой Poppler
+        poppler_path = os.path.join(
+            os.path.dirname(__file__),
+            "poppler-24.08.0",
+            "Library",
+            "bin",
+        )
 
     # Если задан путь к Tesseract через TESSERACT_CMD, передаём его pytesseract
     env_tesseract = os.getenv("TESSERACT_CMD")
