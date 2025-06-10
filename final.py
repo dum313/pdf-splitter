@@ -19,14 +19,16 @@ def main():
     pdftoppm_cmd = shutil.which("pdftoppm")
     if not tesseract_cmd and not os.getenv("TESSERACT_CMD"):
         print(
-            "⚠️ Tesseract OCR не найден. Установите Tesseract или задайте "
+            "⚠️ Tesseract OCR не найден. "
+            "Установите Tesseract или задайте "
             "переменную окружения TESSERACT_CMD."
         )
         sys.exit(1)
 
     if not pdftoppm_cmd and not os.getenv("POPPLER_PATH"):
         print(
-            "⚠️ Утилита pdftoppm не найдена. Установите Poppler или задайте "
+            "⚠️ Утилита pdftoppm не найдена. "
+            "Установите Poppler или задайте "
             "переменную окружения POPPLER_PATH."
         )
         sys.exit(1)
@@ -107,7 +109,6 @@ def main():
     # 📖 Читаем PDF-файл
     reader = PdfReader(source_pdf)
 
-
     # 🔍 Регулярное выражение для поиска ID (например, CICU6332694P)
     flex_pattern = re.compile(r"([A-Z]{4})([A-Z]?)(\d{7})([P])")
 
@@ -182,7 +183,8 @@ def main():
                 new_output_path = f"{base}_{counter}{ext}"
             print(
                 "ℹ️ Имя файла изменено из-за дубликата:",
-                f"{os.path.basename(output_path)} -> {os.path.basename(new_output_path)}",
+                f"{os.path.basename(output_path)} -> "
+                f"{os.path.basename(new_output_path)}",
             )
             output_path = new_output_path
 
