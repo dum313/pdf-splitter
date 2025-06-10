@@ -47,6 +47,7 @@ source venv_tk/bin/activate
 - **Poppler**
   - Windows: скачайте архив на странице [oschwartz10612/poppler-windows](https://github.com/oschwartz10612/poppler-windows/releases) и распакуйте рядом с `final.py` (папка `poppler-24.08.0` уже указана в коде) либо добавьте путь к `bin` в переменную окружения `PATH` и измените переменную `poppler_path` в `final.py`.
   - Linux/MacOS: установите через пакетный менеджер (`apt install poppler-utils` или `brew install poppler`).
+  - Можно также задать путь к Poppler через переменную окружения `POPPLER_PATH`.
 - **Tesseract OCR**
   - Windows: скачайте установщик с [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) или установите `choco install tesseract`.
   - Linux/MacOS: `apt install tesseract-ocr` или `brew install tesseract`.

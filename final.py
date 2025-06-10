@@ -17,6 +17,10 @@ def main():
         "Library",
         "bin",
     )
+    # Если указана переменная окружения POPPLER_PATH, используем её
+    env_poppler = os.getenv("POPPLER_PATH")
+    if env_poppler:
+        poppler_path = env_poppler
 
     # 🔕 Отключаем главное окно tkinter (оно нам не нужно)
     Tk().withdraw()
