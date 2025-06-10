@@ -49,8 +49,9 @@ source venv_tk/bin/activate
   - Linux/MacOS: установите через пакетный менеджер (`apt install poppler-utils` или `brew install poppler`).
   - Можно также задать путь к Poppler через переменную окружения `POPPLER_PATH`.
 - **Tesseract OCR**
-  - Windows: скачайте установщик с [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) или установите `choco install tesseract`.
-  - Linux/MacOS: `apt install tesseract-ocr` или `brew install tesseract`.
-  Если исполняемый файл не находится в `PATH`, пропишите его путь в `pytesseract.pytesseract.tesseract_cmd` внутри `final.py`.
+   - Windows: скачайте установщик с [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) или установите `choco install tesseract`.
+   - Linux/MacOS: `apt install tesseract-ocr` или `brew install tesseract`.
+   Если исполняемый файл не находится в `PATH`, пропишите его путь в `pytesseract.pytesseract.tesseract_cmd` внутри `final.py`
+   или задайте переменную окружения `TESSERACT_CMD` с этим путём.
 
 После установки Poppler и Tesseract запустите скрипт ещё раз, чтобы разделить PDF на страницы.
