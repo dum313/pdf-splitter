@@ -22,6 +22,11 @@ def main():
     if env_poppler:
         poppler_path = env_poppler
 
+    # Если задан путь к Tesseract через TESSERACT_CMD, передаём его pytesseract
+    env_tesseract = os.getenv("TESSERACT_CMD")
+    if env_tesseract:
+        pytesseract.pytesseract.tesseract_cmd = env_tesseract
+
     # 🔕 Отключаем главное окно tkinter (оно нам не нужно)
     Tk().withdraw()
 
