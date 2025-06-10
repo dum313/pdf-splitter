@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import shutil
+import argparse
 import pytesseract
 from pdf2image import convert_from_path
 from PyPDF2 import PdfReader, PdfWriter
@@ -12,6 +13,21 @@ from tqdm import tqdm
 
 def main():
     """Split PDF into separate files using OCR for naming."""
+    parser = argparse.ArgumentParser(
+        description="Split PDF into separate files using OCR for naming."
+    )
+    parser.add_argument(
+        "--input",
+        "-i",
+        help="Путь к исходному PDF-файлу",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        help="Директория для сохранения страниц",
+    )
+    args = parser.parse_args()
+
     # 🧭 Путь к Poppler по умолчанию не указан
     poppler_path = None
 
@@ -34,31 +50,37 @@ def main():
     if env_tesseract:
         pytesseract.pytesseract.tesseract_cmd = env_tesseract
 
-    # 🔕 Отключаем главное окно tkinter (оно нам не нужно)
-    Tk().withdraw()
+    needs_gui = not args.input or not args.output
+    if needs_gui:
+        # 🔕 Отключаем главное окно tkinter (оно нам не нужно)
+        Tk().withdraw()
 
-    # 📂 Открываем стандартное окно выбора PDF-файла
-    source_pdf = filedialog.askopenfilename(
-        title="Выберите PDF-файл для обработки",
-        filetypes=[("PDF файлы", "*.pdf")],
-    )
-
-    # 🚫 Если пользователь нажал "Отмена" или не выбрал файл — выходим
-    if not source_pdf:
-        print("Файл не выбран. Завершение работы.")
-        sys.exit()
+    # 📂 Определяем исходный PDF
+    if args.input:
+        source_pdf = args.input
+    else:
+        source_pdf = filedialog.askopenfilename(
+            title="Выберите PDF-файл для обработки",
+            filetypes=[("PDF файлы", "*.pdf")],
+        )
+        if not source_pdf:
+            print("Файл не выбран. Завершение работы.")
+            sys.exit()
 
     # 📁 Получаем имя файла без расширения
     pdf_name = os.path.splitext(os.path.basename(source_pdf))[0]
 
-    # 🗂️ Предлагаем выбрать папку для сохранения страниц
-    chosen_dir = filedialog.askdirectory(
-        title="Куда сохранить результат",
-        initialdir=os.path.dirname(source_pdf),
-    )
-    if not chosen_dir:
-        # Если папка не выбрана, используем папку рядом с исходным файлом
-        chosen_dir = os.path.dirname(source_pdf)
+    # 🗂️ Папка для сохранения результатов
+    if args.output:
+        chosen_dir = args.output
+    else:
+        chosen_dir = filedialog.askdirectory(
+            title="Куда сохранить результат",
+            initialdir=os.path.dirname(source_pdf),
+        )
+        if not chosen_dir:
+            # Если папка не выбрана, используем папку рядом с исходным файлом
+            chosen_dir = os.path.dirname(source_pdf)
 
     # 🛠️ Создаём выходную папку внутри выбранной директории
     output_folder = os.path.join(chosen_dir, pdf_name)
