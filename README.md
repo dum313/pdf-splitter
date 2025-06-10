@@ -8,3 +8,10 @@
 
 ```bash
 source venv_tk/bin/activate
+```
+
+Запуск скрипта с указанием пути к `poppler`:
+
+```bash
+python final.py --poppler-path /path/to/poppler/bin
+```
