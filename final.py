@@ -50,8 +50,17 @@ def main():
     # 📁 Получаем имя файла без расширения
     pdf_name = os.path.splitext(os.path.basename(source_pdf))[0]
 
-    # 🛠️ Создаём выходную папку рядом с исходным PDF-файлом
-    output_folder = os.path.join(os.path.dirname(source_pdf), pdf_name)
+    # 🗂️ Предлагаем выбрать папку для сохранения страниц
+    chosen_dir = filedialog.askdirectory(
+        title="Куда сохранить результат",
+        initialdir=os.path.dirname(source_pdf),
+    )
+    if not chosen_dir:
+        # Если папка не выбрана, используем папку рядом с исходным файлом
+        chosen_dir = os.path.dirname(source_pdf)
+
+    # 🛠️ Создаём выходную папку внутри выбранной директории
+    output_folder = os.path.join(chosen_dir, pdf_name)
     os.makedirs(output_folder, exist_ok=True)
 
     # 📖 Читаем PDF-файл
