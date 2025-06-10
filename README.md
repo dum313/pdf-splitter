@@ -67,11 +67,15 @@ source venv_tk/bin/activate
   - Установите Poppler так, чтобы утилита `pdftoppm` находилась в системной переменной `PATH`. Если она доступна, скрипт определит Poppler автоматически.
   - Windows: скачайте архив на странице [oschwartz10612/poppler-windows](https://github.com/oschwartz10612/poppler-windows/releases), распакуйте его в удобное место и добавьте подкаталог `bin` в `PATH`.
   - Linux/MacOS: установите Poppler через пакетный менеджер (`apt install poppler-utils` или `brew install poppler`).
-  - При необходимости путь к Poppler можно задать вручную через переменную окружения `POPPLER_PATH`.
-- **Tesseract OCR**
+    - При необходимости путь к Poppler можно задать вручную через переменную окружения `POPPLER_PATH`.
+  - **Tesseract OCR**
    - Windows: скачайте установщик с [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) или установите `choco install tesseract`.
    - Linux/MacOS: `apt install tesseract-ocr` или `brew install tesseract`.
-   Если исполняемый файл не находится в `PATH`, пропишите его путь в `pytesseract.pytesseract.tesseract_cmd` внутри `final.py`
-   или задайте переменную окружения `TESSERACT_CMD` с этим путём.
+    Если исполняемый файл не находится в `PATH`, пропишите его путь в `pytesseract.pytesseract.tesseract_cmd` внутри `final.py`
+    или задайте переменную окружения `TESSERACT_CMD` с этим путём.
+
+При запуске скрипт проверяет наличие `tesseract` и `pdftoppm` в системном `PATH`.
+Если утилиты не найдены и не заданы переменные `TESSERACT_CMD` и `POPPLER_PATH`,
+выводится предупреждение и работа завершается.
 
 После установки Poppler и Tesseract запустите скрипт ещё раз, чтобы разделить PDF на страницы.

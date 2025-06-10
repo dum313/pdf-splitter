@@ -13,6 +13,24 @@ from tqdm import tqdm
 
 def main():
     """Split PDF into separate files using OCR for naming."""
+
+    # 🔍 Проверяем доступность необходимых утилит
+    tesseract_cmd = shutil.which("tesseract")
+    pdftoppm_cmd = shutil.which("pdftoppm")
+    if not tesseract_cmd and not os.getenv("TESSERACT_CMD"):
+        print(
+            "⚠️ Tesseract OCR не найден. Установите Tesseract или задайте "
+            "переменную окружения TESSERACT_CMD."
+        )
+        sys.exit(1)
+
+    if not pdftoppm_cmd and not os.getenv("POPPLER_PATH"):
+        print(
+            "⚠️ Утилита pdftoppm не найдена. Установите Poppler или задайте "
+            "переменную окружения POPPLER_PATH."
+        )
+        sys.exit(1)
+
     parser = argparse.ArgumentParser(
         description="Split PDF into separate files using OCR for naming."
     )
@@ -36,7 +54,7 @@ def main():
     if env_poppler:
         poppler_path = env_poppler
     # Иначе, если в системе есть pdftoppm, используем системный Poppler
-    elif not shutil.which("pdftoppm"):
+    elif not pdftoppm_cmd:
         # Если pdftoppm не найден, берём поставляемый вместе с программой Poppler
         poppler_path = os.path.join(
             os.path.dirname(__file__),
