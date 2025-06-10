@@ -112,6 +112,21 @@ def main():
 
         # 💾 Сохраняем результат в отдельный PDF
         output_path = os.path.join(output_folder, f"{identifier}.pdf")
+
+        # If file exists, append counter suffix until name is unique
+        if os.path.exists(output_path):
+            base, ext = os.path.splitext(output_path)
+            counter = 1
+            new_output_path = f"{base}_{counter}{ext}"
+            while os.path.exists(new_output_path):
+                counter += 1
+                new_output_path = f"{base}_{counter}{ext}"
+            print(
+                "ℹ️ Имя файла изменено из-за дубликата:",
+                f"{os.path.basename(output_path)} -> {os.path.basename(new_output_path)}",
+            )
+            output_path = new_output_path
+
         with open(output_path, "wb") as out_pdf:
             writer.write(out_pdf)
 
