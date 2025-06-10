@@ -8,3 +8,8 @@
 
 ```bash
 source venv_tk/bin/activate
+```
+
+## Лицензия
+
+Проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE).
