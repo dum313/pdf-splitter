@@ -4,6 +4,7 @@ import re
 import sys
 import shutil
 import argparse
+import glob
 import pytesseract
 from pdf2image import convert_from_path
 from PyPDF2 import PdfReader, PdfWriter
@@ -12,6 +13,44 @@ from tqdm import tqdm
 
 # 🔍 Регулярное выражение для поиска ID (например, CICU6332694P)
 flex_pattern = re.compile(r"([A-Z]{4})([A-Z]?)(\d{7})([P])")
+
+
+def search_common_paths(name: str) -> str | None:
+    """Return executable path from typical install directories."""
+    candidates = []
+    if os.name == "nt":
+        if name == "tesseract":
+            candidates.extend(
+                [
+                    r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+                    r"C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe",
+                ]
+            )
+        if name == "pdftoppm":
+            candidates.extend(
+                [
+                    r"C:\\Program Files\\poppler\\bin\\pdftoppm.exe",
+                    r"C:\\Program Files (x86)\\poppler\\bin\\pdftoppm.exe",
+                ]
+            )
+            candidates.extend(
+                glob.glob(
+                    r"C:\\Program Files\\poppler-*\\Library\\bin\\pdftoppm.exe"
+                )
+            )
+            candidates.extend(
+                glob.glob(
+                    r"C:\\Program Files (x86)\\poppler-*\\Library\\bin\\pdftoppm.exe"
+                )
+            )
+    else:
+        for base in ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin"]:
+            candidates.append(os.path.join(base, name))
+
+    for path in candidates:
+        if os.path.isfile(path):
+            return path
+    return None
 
 
 def extract_identifier(text: str) -> str:
@@ -31,6 +70,12 @@ def main():
     # 🔍 Проверяем доступность необходимых утилит
     tesseract_cmd = shutil.which("tesseract")
     pdftoppm_cmd = shutil.which("pdftoppm")
+    pdftoppm_in_path = pdftoppm_cmd is not None
+    if not tesseract_cmd:
+        tesseract_cmd = search_common_paths("tesseract")
+    if not pdftoppm_cmd:
+        pdftoppm_cmd = search_common_paths("pdftoppm")
+
     if not tesseract_cmd and not os.getenv("TESSERACT_CMD"):
         print(
             "⚠️ Tesseract OCR не найден. "
@@ -69,9 +114,9 @@ def main():
     env_poppler = os.getenv("POPPLER_PATH")
     if env_poppler:
         poppler_path = env_poppler
-    # Иначе, если в системе есть pdftoppm, используем системный Poppler
+    elif pdftoppm_cmd and not pdftoppm_in_path:
+        poppler_path = os.path.dirname(pdftoppm_cmd)
     elif not pdftoppm_cmd:
-        # Если pdftoppm не найден, берём поставляемый вместе с программой Poppler
         poppler_path = os.path.join(
             os.path.dirname(__file__),
             "poppler-24.08.0",
@@ -83,6 +128,8 @@ def main():
     env_tesseract = os.getenv("TESSERACT_CMD")
     if env_tesseract:
         pytesseract.pytesseract.tesseract_cmd = env_tesseract
+    elif tesseract_cmd:
+        pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
 
     needs_gui = not args.input or not args.output
     if needs_gui:
