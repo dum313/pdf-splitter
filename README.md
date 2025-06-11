@@ -63,6 +63,8 @@ python final.py --input path/to/file.pdf
   - Windows: скачайте архив на странице [oschwartz10612/poppler-windows](https://github.com/oschwartz10612/poppler-windows/releases), распакуйте его в удобное место и добавьте подкаталог `bin` в `PATH`.
   - Linux/MacOS: установите Poppler через пакетный менеджер (`apt install poppler-utils` или `brew install poppler`).
     - При необходимости путь к Poppler можно задать вручную через переменную окружения `POPPLER_PATH`.
+    - Если вы используете портативную версию Poppler (например, распакованный архив `poppler-24.08.0` рядом со скриптом),
+      укажите путь к каталогу `bin` через `POPPLER_PATH` или добавьте его в `PATH`.
   - **Tesseract OCR**
    - Windows: скачайте установщик с [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) или установите `choco install tesseract`.
    - Linux/MacOS: `apt install tesseract-ocr` или `brew install tesseract`.

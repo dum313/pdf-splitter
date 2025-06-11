@@ -87,8 +87,8 @@ def main():
     if not pdftoppm_cmd and not os.getenv("POPPLER_PATH"):
         print(
             "⚠️ Утилита pdftoppm не найдена. "
-            "Установите Poppler или задайте "
-            "переменную окружения POPPLER_PATH."
+            "Установите Poppler, добавьте путь к pdftoppm в PATH "
+            "или задайте переменную окружения POPPLER_PATH."
         )
         sys.exit(1)
 
@@ -116,13 +116,7 @@ def main():
         poppler_path = env_poppler
     elif pdftoppm_cmd and not pdftoppm_in_path:
         poppler_path = os.path.dirname(pdftoppm_cmd)
-    elif not pdftoppm_cmd:
-        poppler_path = os.path.join(
-            os.path.dirname(__file__),
-            "poppler-24.08.0",
-            "Library",
-            "bin",
-        )
+    # Попытка использовать локальную копию Poppler больше не предпринимается
 
     # Если задан путь к Tesseract через TESSERACT_CMD, передаём его pytesseract
     env_tesseract = os.getenv("TESSERACT_CMD")
