@@ -66,11 +66,14 @@ python final.py --input path/to/file.pdf
   - **Tesseract OCR**
    - Windows: скачайте установщик с [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) или установите `choco install tesseract`.
    - Linux/MacOS: `apt install tesseract-ocr` или `brew install tesseract`.
-    Если исполняемый файл не находится в `PATH`, пропишите его путь в `pytesseract.pytesseract.tesseract_cmd` внутри `final.py`
-    или задайте переменную окружения `TESSERACT_CMD` с этим путём.
+    При необходимости путь к Tesseract можно задать через переменную окружения `TESSERACT_CMD`.
+  - Скрипт также ищет `pdftoppm` и `tesseract` в распространённых каталогах:
+    - Windows: `C:\\Program Files\\Tesseract-OCR\\tesseract.exe`, `C:\\Program Files\\poppler\\bin\\pdftoppm.exe`
+    - macOS/Homebrew: `/opt/homebrew/bin/`, `/usr/local/bin/`
+    - Linux: `/usr/bin/`, `/usr/local/bin/`
 
-При запуске скрипт проверяет наличие `tesseract` и `pdftoppm` в системном `PATH`.
-Если утилиты не найдены и не заданы переменные `TESSERACT_CMD` и `POPPLER_PATH`,
+При запуске скрипт проверяет наличие `tesseract` и `pdftoppm` в системном `PATH`,
+переменных окружения и указанных выше каталогах. Если утилиты не найдены,
 выводится предупреждение и работа завершается.
 
 После установки Poppler и Tesseract запустите скрипт ещё раз, чтобы разделить PDF на страницы.
