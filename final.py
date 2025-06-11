@@ -10,6 +10,20 @@ from PyPDF2 import PdfReader, PdfWriter
 from tkinter import Tk, filedialog
 from tqdm import tqdm
 
+# 🔍 Регулярное выражение для поиска ID (например, CICU6332694P)
+flex_pattern = re.compile(r"([A-Z]{4})([A-Z]?)(\d{7})([P])")
+
+
+def extract_identifier(text: str) -> str:
+    """Return cleaned identifier from OCR text or empty string."""
+
+    text_clean = re.sub(r"[\s()\-\n]+", "", text.upper())
+    match = flex_pattern.search(text_clean)
+    if match:
+        part1, _extra_letter, part2, _last_letter = match.groups()
+        return part1 + part2
+    return ""
+
 
 def main():
     """Split PDF into separate files using OCR for naming."""
@@ -109,9 +123,6 @@ def main():
     # 📖 Читаем PDF-файл
     reader = PdfReader(source_pdf)
 
-    # 🔍 Регулярное выражение для поиска ID (например, CICU6332694P)
-    flex_pattern = re.compile(r"([A-Z]{4})([A-Z]?)(\d{7})([P])")
-
     # ✂️ Область, где обычно написан ID на скане (снизу страницы)
     crop_area = (0, 1900, 1000, 2300)
 
@@ -131,16 +142,13 @@ def main():
         )[0]
         cropped_image = current_image.crop(crop_area)
 
-        # 🔡 Распознаём текст (OCR) и очищаем от мусора
+        # 🔡 Распознаём текст (OCR)
         text = pytesseract.image_to_string(cropped_image)
-        text_clean = re.sub(r"[\s()\-\n]+", "", text.upper())
 
-        # 🧠 Пытаемся найти ID на странице
-        match = flex_pattern.search(text_clean)
-        if match:
-            part1, extra_letter, part2, last_letter = match.groups()
-            identifier = part1 + part2
-        else:
+        # 🧠 Извлекаем ID со страницы
+        identifier = extract_identifier(text)
+        if not identifier:
+            text_clean = re.sub(r"[\s()\-\n]+", "", text.upper())
             identifier = f"unknown_{i + 1}"
             print(f"⚠️ Страница {i+1}: ID не найден → '{text_clean}'")
 
